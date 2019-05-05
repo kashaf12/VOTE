@@ -4,7 +4,7 @@ Vote is an android app for casting vote on any category.
 
 *It's in production phase for a student of Final Year for project submission. 
 
-#Vision
+##Vision
 
 Idea behind this project is to make an android application using Android studio, Firebase
 And Material design guidelines in an under 10 days.
