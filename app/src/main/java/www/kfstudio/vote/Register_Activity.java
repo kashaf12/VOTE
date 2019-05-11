@@ -219,7 +219,7 @@ public class Register_Activity extends AppCompatActivity {
                             .collection(phoneNumber).document("ProfileInformation")
                             .set(user);
 
-                    uploadImage(phoneNumber);
+                    uploadImage();
 
                 }
             }
@@ -352,11 +352,11 @@ public class Register_Activity extends AppCompatActivity {
 
     }
 
-    private void uploadImage(final String phone) {
+    private void uploadImage() {
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReferenceFromUrl("gs://voteapp-master-8201e.appspot.com/"+ phoneNumber + "/");
         if(compressedImage!=null){
-            StorageReference ref = storageReference.child(phone);
+            StorageReference ref = storageReference.child("profile_picture");
             ref.putFile(Uri.fromFile(compressedImage)).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {

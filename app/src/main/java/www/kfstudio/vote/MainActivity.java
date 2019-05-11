@@ -229,18 +229,18 @@ public class  MainActivity extends AppCompatActivity {
                         if (report.areAllPermissionsGranted()) {
                             if (isNetworkAvailable()) {
                                 FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-//                                if (currentUser != null) {
-//                                    Intent intent = new Intent(MainActivity.this, Home.class);
-//                                    progressBar.setVisibility(View.GONE);
-//                                    startActivity(intent);
-//                                    finish();
-//                                } else {
+                                if (currentUser != null) {
+                                    Intent intent = new Intent(MainActivity.this, Home.class);
+                                    progressBar.setVisibility(View.GONE);
+                                    startActivity(intent);
+                                    finish();
+                                } else {
                                     linearLayout.setVisibility(View.VISIBLE);
                                     phoneText.setVisibility(View.VISIBLE);
                                     progressBar.setVisibility(View.GONE);
                                     sendButton.setVisibility(View.VISIBLE);
 
-//                                }
+                                }
                             }
                         }
                         // check for permanent denial of any permission
