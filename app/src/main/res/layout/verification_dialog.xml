@@ -7,15 +7,15 @@
     android:background="@color/primary"
     android:padding="16dp"
     >
-<TextView
-    android:id="@+id/dialog_text"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="16dp"
-    android:text="We sent a 6 digit verification code to +918299104558. Enter it below."
-    android:textColor="@color/accent"
-    android:textSize="18sp"/>
-    <android.support.design.widget.TextInputLayout
+    <TextView
+        android:id="@+id/dialog_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="We sent a 6 digit verification code to +918299104558. Enter it below."
+        android:textColor="@color/accent"
+        android:textSize="18sp"/>
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
@@ -34,8 +34,8 @@
             android:maxLength="6"
             android:maxLines="1"
             android:singleLine="true"
-             />
-    </android.support.design.widget.TextInputLayout>
+            />
+    </com.google.android.material.textfield.TextInputLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
             android:textColor="@color/accent"
             android:textSize="12dp"
             android:textStyle="bold"
-            android:text="Resend"/>
+            android:text="Edit"/>
 
         <TextView
             android:id="@+id/btn_verify"

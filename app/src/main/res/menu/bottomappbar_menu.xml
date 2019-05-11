@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/app_bar_fav"
+        android:icon="@drawable/ic_perm_identity_black_24dp"
+        app:showAsAction="ifRoom"
+        android:title="Profile" />
+
+    <!--tools:ignore="AppCompatResource" />-->
+
+</menu>

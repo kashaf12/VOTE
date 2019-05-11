@@ -25,6 +25,8 @@
 
         <!-- Email Label -->
         <LinearLayout
+            android:id="@+id/layout_linear"
+            android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -36,8 +38,6 @@
                 android:id="@+id/ccp_getFullNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:ccp_hintExampleNumber="true"
-                app:ccp_autoFormatNumber="true"
                 app:ccp_contentColor="@color/accent"
                 app:ccp_hintExampleNumberType="FIXED_LINE"
                 app:ccp_selectionMemoryTag="getFullNumber"
@@ -46,32 +46,42 @@
                 android:layout_gravity="bottom"
                 android:layout_marginBottom="2dp"
                 />
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 >
-                <EditText android:id="@+id/emaillog"
+                <EditText
+                    android:id="@+id/emaillog"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusableInTouchMode="true"
-                    android:focusedByDefault="false"
                     android:focusable="auto"
+
                     android:inputType="phone"
                     android:hint="Phone Number"
                     android:maxLines="1"
-                    android:singleLine="true"/>
-            </android.support.design.widget.TextInputLayout>
+                    android:singleLine="true"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
-        <android.support.v7.widget.AppCompatButton
+        <androidx.appcompat.widget.AppCompatButton
+            android:visibility="visible"
             android:id="@+id/btnuserlog"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:onClick="btnuserlog"
             android:layout_marginBottom="24dp"
             android:padding="12dp"
             android:text="Login"/>
-
+         <ProgressBar
+             android:visibility="gone"
+             android:id="@+id/progress"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_gravity="center"
+             android:clickable="false"
+             android:layout_margin="16dp"/>
 
     </LinearLayout>
 </ScrollView>
