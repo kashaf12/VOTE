@@ -32,8 +32,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -68,7 +71,9 @@ public class Home extends AppCompatActivity {
     private static Bundle mBundleRecyclerViewState;
     RecyclerView recyclerView;
     String name="Loading";
+    Uri downloadUri;
     private File actualImage;
+    Uri uriTask1,uriTask2,uriTask3,uriTask_profile;
     private File compressedImage;
     private File compressedImage1;
     private File compressedImage2;
@@ -94,6 +99,7 @@ public class Home extends AppCompatActivity {
     ImageView imageOption1,imageOption2,imageOption3;
     LinearLayout parentll;
     FirebaseUser currentUser;
+    Map<String,Object> polling;
     private PollAdapter pollAdapter;
     String pollNameString,option1string,option2string,option3string;
     @Override
@@ -107,6 +113,8 @@ public class Home extends AppCompatActivity {
         setSupportActionBar(bottomAppBar);
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
+        downloadimage(currentUser.getPhoneNumber());
+        database(currentUser.getPhoneNumber());
         setUpRecyclerView();
 
 
@@ -115,6 +123,10 @@ public class Home extends AppCompatActivity {
         bottomAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                if(name.equals("Loading")){
+                    downloadimage(currentUser.getPhoneNumber());
+                    database(currentUser.getPhoneNumber());
+                }
                 Intent intent = new Intent(Home.this, Register_Activity.class);
                 Bundle extras = new Bundle();
                 extras.putString("Name", name);
@@ -133,8 +145,6 @@ public class Home extends AppCompatActivity {
         bottomAppBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                        downloadimage(currentUser.getPhoneNumber());
-        database(currentUser.getPhoneNumber());
                 //open bottom sheet
                 BottomSheetDialogFragment bottomSheetDialogFragment = BottomSheetNavigationFragment.newInstance(name,email,image.toString());
                 bottomSheetDialogFragment.show(getSupportFragmentManager(), "Bottom Sheet Dialog Fragment");
@@ -191,10 +201,10 @@ public class Home extends AppCompatActivity {
                         option2string = etOption2.getText().toString().trim();
                         option3string = etOption3.getText().toString().trim();
                         if (!(TextUtils.isEmpty(pollNameString) | TextUtils.isEmpty(option1string) | TextUtils.isEmpty(option2string) | TextUtils.isEmpty(option3string))) {
-                            uploadPoll(pollNameString,option1string,option2string,option3string);
                             uploadImage("poll1");
                             uploadImage("poll2");
                             uploadImage("poll3");
+                            uploadPoll(pollNameString,option1string,option2string,option3string);
                             dialog.dismiss();
                         }else{
                             Toast.makeText(Home.this, "Invalid Input", Toast.LENGTH_SHORT).show();
@@ -211,12 +221,11 @@ public class Home extends AppCompatActivity {
     }
 
     private void setUpRecyclerView() {
-       Query query = dbr.orderBy("Time", Query.Direction.DESCENDING);
+        Query query = dbr.orderBy("Time", Query.Direction.DESCENDING);
         FirestoreRecyclerOptions<Poll> options = new FirestoreRecyclerOptions.Builder<Poll>()
                 .setQuery(query,Poll.class).build();
         pollAdapter = new PollAdapter(options);
-         recyclerView= findViewById(R.id.recycler_view);
-        recyclerView.setHasFixedSize(true);
+        recyclerView= findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(pollAdapter);
 
@@ -234,7 +243,7 @@ public class Home extends AppCompatActivity {
         poll.put("Time",currentDateTimeString);
         poll.put("poll_email",email);
         db = FirebaseFirestore.getInstance();
-        db.collection("Polls").document().set(poll);
+        db.collection("Polls").document(currentDateTimeString).set(poll);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -267,7 +276,6 @@ public class Home extends AppCompatActivity {
             @Override
             public void onSuccess(Uri uri) {
                 image = uri;
-
 
             }
         });
@@ -359,7 +367,7 @@ public class Home extends AppCompatActivity {
     public void showError(String errorMessage) {
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
     }
-    private void uploadImage(String name) {
+    private void uploadImage(final String name) {
         switch (name){
             case "poll1":compressedImage=compressedImage1;
                 break;
@@ -367,13 +375,52 @@ public class Home extends AppCompatActivity {
                 break;
             case "poll3":compressedImage=compressedImage3;
                 break;
-        }
-        if(!name.isEmpty()) {
+        }if(!name.isEmpty()) {
             storage = FirebaseStorage.getInstance();
-            storageReference = storage.getReferenceFromUrl("gs://voteapp-master-8201e.appspot.com/" + currentUser.getPhoneNumber() + "/Polls/" + currentDateTimeString + "/");
+            storageReference = storage.getReferenceFromUrl
+                    ("gs://voteapp-master-8201e.appspot.com/"
+                            + currentUser.getPhoneNumber() + "/Polls/"
+                            + currentDateTimeString + "/");
             if (compressedImage != null) {
-                StorageReference ref = storageReference.child(name);
+                final StorageReference ref = storageReference.child(name);
                 ref.putFile(Uri.fromFile(compressedImage));
+                Task<Uri> uriTask= ref.putFile(Uri.fromFile(compressedImage)).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                    @Override
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        if(!task.isSuccessful()){
+                            throw task.getException();
+                        }
+                        return ref.getDownloadUrl();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful()) {
+                            downloadUri = task.getResult();
+                            polling = new HashMap<>();
+                            switch (name){
+                                case "profile":uriTask_profile=downloadUri;
+                                    polling.put("poll_profile_image",uriTask_profile.toString());
+                                    db.collection("Polls").document(currentDateTimeString).update(polling);
+                                    break;
+                                case "poll1":uriTask1= downloadUri;
+                                    polling.put("poll_1_url",uriTask1.toString());
+                                    db.collection("Polls").document(currentDateTimeString).update(polling);
+
+                                    break;
+                                case "poll2": uriTask2=downloadUri;
+                                    polling.put("poll_2_url",uriTask2.toString());
+                                    db.collection("Polls").document(currentDateTimeString).update(polling);
+                                    break;
+                                case "poll3":uriTask3=downloadUri;
+                                    polling.put("poll_3_url",uriTask3.toString());
+                                    db.collection("Polls").document(currentDateTimeString).update(polling);
+                                    break;
+                            }
+                        }
+                    }
+                });
+
             }
         }
     }
@@ -396,5 +443,5 @@ public class Home extends AppCompatActivity {
     protected void onPause(){
         super.onPause();
         pollAdapter.stopListening();
-        }
+    }
 }

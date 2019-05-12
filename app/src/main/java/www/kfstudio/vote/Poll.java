@@ -1,12 +1,34 @@
 package www.kfstudio.vote;
 
 public class Poll {
+    private String poll_1_url;
+    private String poll_2_url;
+    private String poll_3_url;
+    private String poll_profile_image;
     private String poll_name;
     private String poll_email;
     private String poll_title;
     private String poll_1;
     private String poll_2;
     private String poll_3;
+    private String poll_phone;
+
+    public String getPoll_1_url() {
+        return poll_1_url;
+    }
+
+    public String getPoll_2_url() {
+        return poll_2_url;
+    }
+
+    public String getPoll_3_url() {
+        return poll_3_url;
+    }
+    public String getPoll_profile_image() {
+        return poll_profile_image;
+    }
+
+
 
     public Poll(){
 
@@ -43,5 +65,9 @@ public class Poll {
         this.poll_1 = poll_1;
         this.poll_2 = poll_2;
         this.poll_3 = poll_3;
+    }
+
+    public String getPoll_phone() {
+        return poll_phone;
     }
 }

@@ -120,9 +120,6 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
         if (behavior instanceof BottomSheetBehavior) {
             ((BottomSheetBehavior) behavior).setBottomSheetCallback(mBottomSheetBehaviorCallback);
         }
-        if(name.getText().equals("Loading")){
-            dismiss();
-        }
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
