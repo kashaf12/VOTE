@@ -28,6 +28,6 @@
             android:name=".Home"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Material"/>
-    </application>
+           </application>
 
 </manifest>

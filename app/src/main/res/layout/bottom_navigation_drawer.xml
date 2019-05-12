@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/navigation_view_layout"
     android:layout_width="match_parent"
+    android:background="@color/accent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
@@ -25,9 +26,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="12dp"
             android:layout_marginTop="16dp"
-            android:layout_toLeftOf="@+id/close_image_view"
             android:layout_toRightOf="@+id/profile_image"
-            android:text="Dr. Droid"
+            android:text="Kashaf Ahmed"
             android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -39,21 +39,10 @@
             android:layout_below="@+id/user_name"
             android:layout_marginLeft="12dp"
             android:layout_marginTop="2dp"
-            android:layout_toLeftOf="@+id/close_image_view"
             android:layout_toRightOf="@+id/profile_image"
-            android:text="surender@androhub.com"
+            android:text="Kashafaahmed@gmail.com"
             android:textColor="@android:color/black" />
 
-
-        <ImageView
-            android:id="@+id/close_image_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:padding="16dp"
-            android:visibility="gone"
-            android:src="@drawable/ic_close_black_24dp" />
 
         <View
             android:id="@+id/divider_one"
@@ -70,6 +59,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="4dp"
+        android:background="@color/primary_darker"
+        android:textAlignment="center"
         app:menu="@menu/bottom_navigation_menu" />
 
 </LinearLayout>

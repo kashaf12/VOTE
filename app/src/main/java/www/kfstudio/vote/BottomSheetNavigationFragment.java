@@ -2,26 +2,44 @@ package www.kfstudio.vote;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 
 public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
 
 
-    public static BottomSheetNavigationFragment newInstance() {
+    public static BottomSheetNavigationFragment newInstance(String name,String email,String imagePath) {
 
         Bundle args = new Bundle();
-
+        args.putString("Name",name);
+        args.putString("Email",email);
+        args.putString("Image",imagePath);
         BottomSheetNavigationFragment fragment = new BottomSheetNavigationFragment();
         fragment.setArguments(args);
         return fragment;
@@ -40,17 +58,23 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
 
         @Override
         public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-            //check the slide offset and change the visibility of close button
-            if (slideOffset > 0.5) {
-                closeButton.setVisibility(View.VISIBLE);
-            } else {
-                closeButton.setVisibility(View.GONE);
-            }
+
         }
+
+
     };
 
-    private ImageView closeButton;
-
+    private FirebaseAuth mAuth;
+    private ImageView profile;
+    DocumentReference documentReference;
+    FirebaseFirestore db;
+    private FirebaseStorage storage;
+    private StorageReference storageReference;
+    private TextView name;
+    private TextView email;
+    private String username;
+    private String useremail;
+    private String userimage;
     @SuppressLint("RestrictedApi")
     @Override
     public void setupDialog(Dialog dialog, int style) {
@@ -58,26 +82,33 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
         //Get the content View
         View contentView = View.inflate(getContext(), R.layout.bottom_navigation_drawer, null);
         dialog.setContentView(contentView);
-
+        profile = contentView.findViewById(R.id.profile_image);
+        name=contentView.findViewById(R.id.user_name);
+        email = contentView.findViewById(R.id.user_email);
+        name.setText(username);
+        email.setText(useremail);
+        Glide.with(getActivity())
+                .load(Uri.parse(userimage))
+                .apply(new RequestOptions().placeholder(R.drawable.blank_profile_picture_973460_960_720))
+                .apply(RequestOptions.centerCropTransform())
+                .into(profile);
         NavigationView navigationView = contentView.findViewById(R.id.navigation_view);
-
-        //implement navigation menu item click event
+        mAuth = FirebaseAuth.getInstance();
+        final FirebaseUser currentUser = mAuth.getCurrentUser();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.nav01:
+                    case R.id.nav16:
+                        if (currentUser != null) {
+                            mAuth.signOut();
+                            sendToAuth();
+                        } else {
+                            sendToAuth();
+                        }
                         break;
                 }
                 return false;
-            }
-        });
-        closeButton = contentView.findViewById(R.id.close_image_view);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //dismiss bottom sheet
-                dismiss();
             }
         });
 
@@ -89,6 +120,27 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
         if (behavior instanceof BottomSheetBehavior) {
             ((BottomSheetBehavior) behavior).setBottomSheetCallback(mBottomSheetBehaviorCallback);
         }
+        if(name.getText().equals("Loading")){
+            dismiss();
+        }
     }
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
+        //contItems = new ArrayList<hash>();
+        if(getArguments() != null) {
+           username= getArguments().getString("Name");
+            useremail=getArguments().getString("Email");
+            userimage=getArguments().getString("Image");
+
+
+        }
+    }
+    private void sendToAuth(){
+
+        Intent intent = new Intent(getActivity(),MainActivity.class);
+        startActivity(intent);
+        getActivity().finish();
+    }
 }

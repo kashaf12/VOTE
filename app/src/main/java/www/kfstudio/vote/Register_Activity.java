@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -30,6 +31,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -102,6 +104,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class Register_Activity extends AppCompatActivity {
+    String genderbundle="male";
     private File actualImage;
     private File compressedImage;
     private FirebaseStorage storage;
@@ -124,6 +127,7 @@ public class Register_Activity extends AppCompatActivity {
     private CircularImageView circleImageView;
     private int GALLERY = 1;
     String phoneNumber;
+    RadioButton male,female;
 
 
     @Override
@@ -133,15 +137,18 @@ public class Register_Activity extends AppCompatActivity {
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
+
         name= findViewById(R.id.name);
         email = findViewById(R.id.email);
         gender = findViewById(R.id.gender);
         dob= findViewById(R.id.dob);
-        RadioButton male = findViewById(R.id.MALE);
+        male = findViewById(R.id.MALE);
+        female=findViewById(R.id.FEMALE);
         male.setChecked(true);
         dob.setFocusable(false);
         dob.setLongClickable(false);
         EditText pHonenumber = findViewById(R.id.phonnumber);
+
         save = findViewById(R.id.save);
         final Calendar myCalendar = Calendar.getInstance();
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
@@ -183,6 +190,24 @@ public class Register_Activity extends AppCompatActivity {
             pHonenumber.setTextColor(Color.WHITE);
             editor.putString(Phone,phoneNumber );
             editor.apply();
+            name.setText(bundle.getString("Name"));
+            email.setText(bundle.getString("Email"));
+            Glide.with(this)
+                    .load(Uri.parse(bundle.getString("Image")))
+                    .apply(new RequestOptions().placeholder(R.drawable.blank_profile_picture_973460_960_720))
+                    .apply(RequestOptions.centerCropTransform())
+                    .into(circleImageView);
+
+
+            dob.setText(bundle.getString("Dob"));
+            genderbundle=bundle.getString("Gender");
+            save.setText("Save");
+            if(genderbundle.equals("Male")){
+                male.setChecked(true);
+            }else {
+                female.setChecked(true);
+            }
+
         }
         phoneNumber=sharedpreferences.getString(Phone,null);
         if(phoneNumber==null){

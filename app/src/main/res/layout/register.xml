@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    android:id="@+id/layout_linear_profile"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -47,6 +49,7 @@
                 android:layout_marginBottom="8dp"
                 >
                 <ImageView
+                    android:id="@+id/name_image"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_perm_identity_black_24dp"
@@ -71,6 +74,7 @@
                 android:layout_marginBottom="8dp"
                 >
                 <ImageView
+                    android:id="@+id/phone_image"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_call_white_24dp"
@@ -95,6 +99,7 @@
                 android:layout_marginBottom="8dp"
                 >
                 <ImageView
+                    android:id="@+id/email_image"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_email_white_24dp"
@@ -134,7 +139,7 @@
                         android:text="Male"
                         android:checked="true"/>
                     <RadioButton
-
+                        android:id="@+id/FEMALE"
                         android:layout_width="wrap_content"
                         android:layout_marginStart="30dp"
                         android:layout_height="match_parent"
@@ -148,6 +153,7 @@
                 android:orientation="horizontal"
                 android:layout_marginBottom="8dp">
                 <ImageView
+                    android:id="@+id/dob_image"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_cake_white_24dp"

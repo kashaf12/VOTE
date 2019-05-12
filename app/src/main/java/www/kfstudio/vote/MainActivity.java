@@ -56,7 +56,7 @@ public class  MainActivity extends AppCompatActivity {
     private EditText phoneText;
     private CountryCodePicker ccpGetNumber;
     private Button sendButton;
-     FirebaseAuth firebaseAuth;
+    FirebaseAuth firebaseAuth;
     private String mVerificationId;
     String verifyCode;
     Dialog dialog;
@@ -84,7 +84,7 @@ public class  MainActivity extends AppCompatActivity {
         mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
             public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
-              }
+            }
 
             @Override
             public void onVerificationFailed(FirebaseException e) {
@@ -196,7 +196,7 @@ public class  MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            checkdata(ccpGetNumber.getFullNumberWithPlus());
+                            database(ccpGetNumber.getFullNumberWithPlus());
 
                         }
                         else{
@@ -297,24 +297,21 @@ public class  MainActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    private void database(String phone){
+    private  void database(final String phone){
         db = FirebaseFirestore.getInstance();
         documentReference = db.collection("Vote").document("Users")
-                .collection(phone).document("Profile_Informaation");
+                .collection(phone).document("ProfileInformation");
         documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.exists()){
+                if(documentSnapshot.exists()) {
+                    Intent intent = new Intent(MainActivity.this,Home.class);
+                    startActivity(intent);
+                    finish();
 
                 }else{
-
+                    checkdata(phone);
                 }
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
             }
         });
 
