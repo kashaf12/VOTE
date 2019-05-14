@@ -211,6 +211,7 @@ public class  MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent(MainActivity.this,Register_Activity.class);
         intent.putExtra("phoneNumber",phoneNumber);
+        intent.putExtra("Main",true);
         progressBar.setVisibility(View.GONE);
         startActivity(intent);
         finish();

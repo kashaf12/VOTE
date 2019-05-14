@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            app:backgroundTint="@color/mtrl_dark_on_primary_disabled"
+            app:backgroundTint="@color/cardview_dark_background"
             app:elevation="8dp"
             app:fabAlignmentMode="center"
             app:fabCradleMargin="16dp"

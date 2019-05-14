@@ -40,28 +40,29 @@ public class PollAdapter extends FirestoreRecyclerAdapter<Poll, PollAdapter.Poll
         pollHolder.poll_1.setText(poll.getPoll_1());
         pollHolder.poll_2.setText(poll.getPoll_2());
         pollHolder.poll_3.setText(poll.getPoll_3());
+        pollHolder.poll_vote.setText(poll.getPoll_vote());
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReferenceFromUrl("gs://voteapp-master-8201e.appspot.com/"+poll.getPoll_phone()+"/");
         storageReference.child("profile_picture").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 Glide.with(v).load(uri)
-                        .apply(new RequestOptions().placeholder(R.drawable.blank_profile_picture_973460_960_720))
+                        .apply(new RequestOptions().placeholder(R.drawable.progress_animation))
                         .apply(RequestOptions.centerCropTransform())
                         .into(pollHolder.profile_poll);
 
             }
         });
         Glide.with(v).load(poll.getPoll_1_url())
-                .apply(new RequestOptions().placeholder(R.drawable.blank_profile_picture_973460_960_720))
+                .apply(new RequestOptions().placeholder(R.drawable.progress_animation))
                 .apply(RequestOptions.centerCropTransform())
                 .into(pollHolder.option1_poll_image);
         Glide.with(v).load(poll.getPoll_2_url())
-                .apply(new RequestOptions().placeholder(R.drawable.blank_profile_picture_973460_960_720))
+                .apply(new RequestOptions().placeholder(R.drawable.progress_animation))
                 .apply(RequestOptions.centerCropTransform())
                 .into(pollHolder.option2_poll_image);
         Glide.with(v).load(poll.getPoll_3_url())
-                .apply(new RequestOptions().placeholder(R.drawable.blank_profile_picture_973460_960_720))
+                .apply(new RequestOptions().placeholder(R.drawable.progress_animation))
                 .apply(RequestOptions.centerCropTransform())
                 .into(pollHolder.option3_poll_image);
 
@@ -81,6 +82,7 @@ public class PollAdapter extends FirestoreRecyclerAdapter<Poll, PollAdapter.Poll
        TextView poll_1;
        TextView poll_2;
        TextView poll_3;
+       TextView poll_vote;
        CircularImageView profile_poll;
        ImageView option1_poll_image,option2_poll_image,option3_poll_image;
         public PollHolder(@NonNull View itemView) {
@@ -95,6 +97,7 @@ public class PollAdapter extends FirestoreRecyclerAdapter<Poll, PollAdapter.Poll
             option1_poll_image=itemView.findViewById(R.id.option1_image_poll);
             option2_poll_image=itemView.findViewById(R.id.option2_image_poll);
             option3_poll_image=itemView.findViewById(R.id.option3_image_poll);
+            poll_vote=itemView.findViewById(R.id.votes);
 
         }
     }

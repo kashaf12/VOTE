@@ -71,10 +71,11 @@ public class Home extends AppCompatActivity {
     private static Bundle mBundleRecyclerViewState;
     RecyclerView recyclerView;
     String name="Loading";
+    String poll_vote="0";
     Uri downloadUri;
     private File actualImage;
     Uri uriTask1,uriTask2,uriTask3,uriTask_profile;
-    private File compressedImage;
+    private File compressedImage,profile_imag;
     private File compressedImage1;
     private File compressedImage2;
     private File compressedImage3;
@@ -101,20 +102,32 @@ public class Home extends AppCompatActivity {
     FirebaseUser currentUser;
     Map<String,Object> polling;
     private PollAdapter pollAdapter;
+
     String pollNameString,option1string,option2string,option3string;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
         bottomAppBar=findViewById(R.id.bottom_app_bar);
         floatingActionButton = findViewById(R.id.fab);
-        image = Uri.parse("android.resource://"+getApplicationContext().getPackageName()+"/drawable/blank_profile_picture_973460_960_720");
+        db = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
+
         //main line for setting menu in bottom app bar
         setSupportActionBar(bottomAppBar);
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-        downloadimage(currentUser.getPhoneNumber());
         database(currentUser.getPhoneNumber());
+        if (bundle != null) {
+
+            image = Uri.fromFile(new File(bundle.getString("image")));
+            uploadProfile();
+        }else{
+            image = Uri.parse("android.resource://"+getApplicationContext().getPackageName()+"/drawable/blank_profile_picture_973460_960_720");
+            downloadimage(currentUser.getPhoneNumber());
+            }
         setUpRecyclerView();
 
 
@@ -124,7 +137,7 @@ public class Home extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if(name.equals("Loading")){
-                    downloadimage(currentUser.getPhoneNumber());
+//                    downloadimage(currentUser.getPhoneNumber());
                     database(currentUser.getPhoneNumber());
                 }
                 Intent intent = new Intent(Home.this, Register_Activity.class);
@@ -241,8 +254,8 @@ public class Home extends AppCompatActivity {
         poll.put("poll_name",name);
         poll.put("PhoneNumber",currentUser.getPhoneNumber());
         poll.put("Time",currentDateTimeString);
+        poll.put("poll_vote",poll_vote);
         poll.put("poll_email",email);
-        db = FirebaseFirestore.getInstance();
         db.collection("Polls").document(currentDateTimeString).set(poll);
     }
     @Override
@@ -269,18 +282,18 @@ public class Home extends AppCompatActivity {
         });
 
     }
-    private void downloadimage(String phone){
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReferenceFromUrl("gs://voteapp-master-8201e.appspot.com/"+phone+"/");
-        storageReference.child("profile_picture").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                image = uri;
+//    private void downloadimage(String phone){
+//        storage = FirebaseStorage.getInstance();
+//        storageReference = storage.getReferenceFromUrl("gs://voteapp-master-8201e.appspot.com/"+phone+"/");
+//        storageReference.child("profile_image").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//            @Override
+//            public void onSuccess(Uri uri) {
+//                image = uri;
+//
+//            }
+//        });
 
-            }
-        });
-
-    }
+  //  }
     public void choosePhotoFromGallary() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -332,24 +345,25 @@ public class Home extends AppCompatActivity {
                                 case 1: compressedImage1=file;
                                     Glide.with(getApplicationContext())
                                             .load(compressedImage1)
-                                            .apply(new RequestOptions().placeholder(R.drawable.blank_profile_picture_973460_960_720))
+                                            .apply(new RequestOptions().placeholder(R.drawable.progress_animation))
                                             .apply(RequestOptions.centerCropTransform())
                                             .into(imageOption1);
                                     break;
                                 case 2:compressedImage2=file;
                                     Glide.with(getApplicationContext())
                                             .load(compressedImage2)
-                                            .apply(new RequestOptions().placeholder(R.drawable.blank_profile_picture_973460_960_720))
+                                            .apply(new RequestOptions().placeholder(R.drawable.progress_animation))
                                             .apply(RequestOptions.centerCropTransform())
                                             .into(imageOption2);
                                     break;
                                 case 3:compressedImage3=file;
                                     Glide.with(getApplicationContext())
                                             .load(compressedImage3)
-                                            .apply(new RequestOptions().placeholder(R.drawable.blank_profile_picture_973460_960_720))
+                                            .apply(new RequestOptions().placeholder(R.drawable.progress_animation))
                                             .apply(RequestOptions.centerCropTransform())
                                             .into(imageOption3);
                                     break;
+
 
 
                             }
@@ -376,15 +390,14 @@ public class Home extends AppCompatActivity {
             case "poll3":compressedImage=compressedImage3;
                 break;
         }if(!name.isEmpty()) {
-            storage = FirebaseStorage.getInstance();
+
             storageReference = storage.getReferenceFromUrl
                     ("gs://voteapp-master-8201e.appspot.com/"
                             + currentUser.getPhoneNumber() + "/Polls/"
                             + currentDateTimeString + "/");
             if (compressedImage != null) {
                 final StorageReference ref = storageReference.child(name);
-                ref.putFile(Uri.fromFile(compressedImage));
-                Task<Uri> uriTask= ref.putFile(Uri.fromFile(compressedImage)).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                ref.putFile(Uri.fromFile(compressedImage)).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                     @Override
                     public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                         if(!task.isSuccessful()){
@@ -424,6 +437,32 @@ public class Home extends AppCompatActivity {
             }
         }
     }
+    private void uploadProfile(){
+        storageReference = storage.getReferenceFromUrl("gs://voteapp-master-8201e.appspot.com/" + currentUser.getPhoneNumber() + "/");
+            final StorageReference ref = storageReference.child("profile_picture");
+            ref.putFile(image).continueWith(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+                    return ref.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Task<Uri>>() {
+                @Override
+                public void onComplete(@NonNull Task<Task<Uri>> task) {
+                    if(task.isSuccessful()) {
+                        Map<String,Object> user = new HashMap<>();
+                        user.put("profile_image", task.getResult().toString());
+                        db.collection("Vote").document("Users")
+                                .collection(currentUser.getPhoneNumber()).document("ProfileInformation")
+                                .update(user);
+
+                    }
+                }
+            });
+
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -443,5 +482,16 @@ public class Home extends AppCompatActivity {
     protected void onPause(){
         super.onPause();
         pollAdapter.stopListening();
+    }
+
+    private void downloadimage(String phone){
+        storageReference = storage.getReferenceFromUrl("gs://voteapp-master-8201e.appspot.com/"+phone+"/");
+        storageReference.child("profile_picture").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+            image=uri;
+            }
+        });
+
     }
 }

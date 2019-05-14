@@ -12,6 +12,7 @@ public class Poll {
     private String poll_2;
     private String poll_3;
     private String poll_phone;
+    private String poll_vote;
 
     public String getPoll_1_url() {
         return poll_1_url;
@@ -69,5 +70,9 @@ public class Poll {
 
     public String getPoll_phone() {
         return poll_phone;
+    }
+
+    public String getPoll_vote() {
+        return poll_vote;
     }
 }

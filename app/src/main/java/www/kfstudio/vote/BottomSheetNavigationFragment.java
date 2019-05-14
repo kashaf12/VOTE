@@ -89,7 +89,7 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
         email.setText(useremail);
         Glide.with(getActivity())
                 .load(Uri.parse(userimage))
-                .apply(new RequestOptions().placeholder(R.drawable.blank_profile_picture_973460_960_720))
+                .apply(new RequestOptions().placeholder(R.drawable.progress_animation))
                 .apply(RequestOptions.centerCropTransform())
                 .into(profile);
         NavigationView navigationView = contentView.findViewById(R.id.navigation_view);
