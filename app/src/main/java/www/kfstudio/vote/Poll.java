@@ -1,10 +1,12 @@
 package www.kfstudio.vote;
 
+import java.util.Map;
+
 public class Poll {
     private String poll_1_url;
     private String poll_2_url;
     private String poll_3_url;
-    private String poll_profile_image;
+    private String poll_profile_image_url;
     private String poll_name;
     private String poll_email;
     private String poll_title;
@@ -13,6 +15,10 @@ public class Poll {
     private String poll_3;
     private String poll_phone;
     private String poll_vote;
+    private String poll_vote_1;
+    private String poll_vote_2;
+    private String poll_vote_3;
+
 
     public String getPoll_1_url() {
         return poll_1_url;
@@ -25,8 +31,8 @@ public class Poll {
     public String getPoll_3_url() {
         return poll_3_url;
     }
-    public String getPoll_profile_image() {
-        return poll_profile_image;
+    public String getPoll_profile_image_url() {
+        return poll_profile_image_url;
     }
 
 
@@ -59,13 +65,14 @@ public class Poll {
         return poll_3;
     }
 
-    public Poll(String poll_name, String poll_email, String poll_title, String poll_1, String poll_2, String poll_3) {
+    public Poll(String poll_name, String poll_email, String poll_title, String poll_1, String poll_2, String poll_3,String poll_phone) {
         this.poll_name = poll_name;
         this.poll_email = poll_email;
         this.poll_title = poll_title;
         this.poll_1 = poll_1;
         this.poll_2 = poll_2;
         this.poll_3 = poll_3;
+        this.poll_phone=poll_phone;
     }
 
     public String getPoll_phone() {
@@ -74,5 +81,17 @@ public class Poll {
 
     public String getPoll_vote() {
         return poll_vote;
+    }
+
+    public String getPoll_vote_3() {
+        return poll_vote_3;
+    }
+
+    public String getPoll_vote_2() {
+        return poll_vote_2;
+    }
+
+    public String getPoll_vote_1() {
+        return poll_vote_1;
     }
 }

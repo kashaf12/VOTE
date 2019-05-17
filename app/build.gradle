@@ -35,6 +35,7 @@ dependencies {
     implementation 'id.zelory:compressor:2.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta1'
     implementation 'com.google.firebase:firebase-auth:17.0.0'
+    implementation 'me.ithebk:barchart:0.9'
     implementation 'com.google.firebase:firebase-firestore:19.0.0'
     implementation 'com.google.firebase:firebase-storage:17.0.0'
     testImplementation 'junit:junit:4.12'

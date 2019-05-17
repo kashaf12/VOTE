@@ -370,10 +370,10 @@ public class Register_Activity extends AppCompatActivity {
             showError("Please choose an image!");
         } else {
             new Compressor(this)
-                    .setMaxWidth(640)
-                    .setMaxHeight(480)
-                    .setQuality(75)
-                    .setCompressFormat(Bitmap.CompressFormat.PNG)
+                    .setMaxWidth(60)
+                    .setMaxHeight(60)
+                    .setQuality(50)
+                    .setCompressFormat(Bitmap.CompressFormat.WEBP)
                     .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
                             Environment.DIRECTORY_PICTURES).getAbsolutePath())
                     .compressToFileAsFlowable(actualImage)

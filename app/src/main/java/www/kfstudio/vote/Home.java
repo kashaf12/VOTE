@@ -46,6 +46,7 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
@@ -56,8 +57,11 @@ import com.google.firebase.storage.UploadTask;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import id.zelory.compressor.Compressor;
@@ -65,21 +69,27 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class Home extends AppCompatActivity {
+public class Home extends AppCompatActivity{
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private static Bundle mBundleRecyclerViewState;
     RecyclerView recyclerView;
     String name="Loading";
-    String poll_vote="0";
+    int poll_vote=0;
     Uri downloadUri;
     private File actualImage;
+    int poll_vote_1=0;
+    int poll_vote_2=0;
+    int poll_vote_3=0;
+
     Uri uriTask1,uriTask2,uriTask3,uriTask_profile;
     private File compressedImage,profile_imag;
     private File compressedImage1;
     private File compressedImage2;
     private File compressedImage3;
     private FirebaseAuth mAuth;
+    ArrayList<String> arrayList;
+    Uri poll_profile_image;
     DocumentReference documentReference;
     FirebaseFirestore db=FirebaseFirestore.getInstance();
     private CollectionReference dbr = db.collection("Polls");
@@ -102,7 +112,7 @@ public class Home extends AppCompatActivity {
     FirebaseUser currentUser;
     Map<String,Object> polling;
     private PollAdapter pollAdapter;
-
+    int clicked=0;
     String pollNameString,option1string,option2string,option3string;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -241,7 +251,45 @@ public class Home extends AppCompatActivity {
         recyclerView= findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(pollAdapter);
+        pollAdapter.setOnItemClickListener(new PollAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(DocumentSnapshot documentSnapshot, int position,String pollString) {
+                Poll poll = documentSnapshot.toObject(Poll.class);
+                String id = documentSnapshot.getId();
+                String path = documentSnapshot.getReference().getPath();
+                int poll_vote= Integer.parseInt(documentSnapshot.get("poll_vote").toString());
+                poll_vote_1= Integer.parseInt(documentSnapshot.get("poll_vote_1").toString());
+                poll_vote_2= Integer.parseInt(documentSnapshot.get("poll_vote_2").toString());
+                poll_vote_3= Integer.parseInt(documentSnapshot.get("poll_vote_3").toString());
+                arrayList = (ArrayList<String>) documentSnapshot.get("poll_clicked");
+                for(String item : arrayList) {
+                    if (item.equals(currentUser.getPhoneNumber())) {
+                        Toast.makeText(Home.this, "You have already rated this poll!", Toast.LENGTH_SHORT).show();
+                        return;
 
+                    }
+                }
+                clicked++;
+                switch (pollString){
+                    case "poll1":poll_vote_1++;
+
+                    break;
+                    case "poll2":poll_vote_2++;
+                        break;
+                    case "poll3":poll_vote_3++;
+                        break;
+                }
+
+                poll_vote++;
+                Map<String,Object> polls = new HashMap<>();
+                polls.put("poll_vote",Integer.toString(poll_vote));
+                polls.put("poll_vote_1",Integer.toString(poll_vote_1));
+                polls.put("poll_vote_2",Integer.toString(poll_vote_2));
+                polls.put("poll_vote_3",Integer.toString(poll_vote_3));
+                polls.put("poll_clicked", FieldValue.arrayUnion(currentUser.getPhoneNumber()));
+                db.collection("Polls").document(id).update(polls);
+               }
+        });
     }
 
     private void uploadPoll(String pollNameString, String option1string, String option2string, String option3string) {
@@ -252,10 +300,14 @@ public class Home extends AppCompatActivity {
         poll.put("poll_2",option2string);
         poll.put("poll_3",option3string);
         poll.put("poll_name",name);
-        poll.put("PhoneNumber",currentUser.getPhoneNumber());
+        poll.put("poll_phone",currentUser.getPhoneNumber());
         poll.put("Time",currentDateTimeString);
-        poll.put("poll_vote",poll_vote);
+        poll.put("poll_vote",Integer.toString(poll_vote));
+        poll.put("poll_vote_1","0");
+        poll.put("poll_vote_2","0");
+        poll.put("poll_vote_3","0");
         poll.put("poll_email",email);
+        poll.put("poll_clicked", Arrays.asList("0"));
         db.collection("Polls").document(currentDateTimeString).set(poll);
     }
     @Override
@@ -328,10 +380,10 @@ public class Home extends AppCompatActivity {
             showError("Please choose an image!");
         } else {
             new Compressor(this)
-                    .setMaxWidth(640)
-                    .setMaxHeight(480)
-                    .setQuality(75)
-                    .setCompressFormat(Bitmap.CompressFormat.PNG)
+                    .setMaxWidth(60)
+                    .setMaxHeight(60)
+                    .setQuality(50)
+                    .setCompressFormat(Bitmap.CompressFormat.WEBP)
                     .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
                             Environment.DIRECTORY_PICTURES).getAbsolutePath())
                     .compressToFileAsFlowable(actualImage)
@@ -489,9 +541,11 @@ public class Home extends AppCompatActivity {
         storageReference.child("profile_picture").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-            image=uri;
+
+                    image = uri;
             }
         });
 
     }
+
 }
