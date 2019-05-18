@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="12dp"
-        android:text="Create Your Poll"
+        android:text="Developers"
         android:textColor="@color/primary_darker"
         android:textSize="18sp" />
 
@@ -25,17 +25,17 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Poll :"
+            android:text="Project head :"
             android:textColor="@android:color/black"
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <EditText
+        <TextView
             android:id="@+id/poll_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:hint="Who will win 2019 State elections?"
+            android:text="Dr. Sameer Srivastava"
             android:textColor="@android:color/black"
             android:textColorHint="@color/iron"
             android:textSize="16sp"
@@ -44,76 +44,63 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/option1_image"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@color/iron"
-            android:src="@drawable/baseline_add_white_24" />
 
-        <EditText
+        <TextView
             android:id="@+id/option1_et"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="8dp"
-            android:hint="Write Option 1"
-            android:textColor="@android:color/black"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Kashaf Ahmed"
+            android:textColor="@color/primary_dark"
             android:textColorHint="@color/iron"
             android:textSize="14sp" />
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/option2_image"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@color/iron"
-            android:src="@drawable/baseline_add_white_24" />
 
-        <EditText
-            android:id="@+id/option2_et"
-            android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="8dp"
-            android:hint="Write Option 2"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:textColor="@android:color/black"
             android:textColorHint="@color/iron"
             android:textSize="14sp" />
     </LinearLayout>
+
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/option3_image"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@color/iron"
-            android:src="@drawable/baseline_add_white_24" />
 
-        <EditText
-            android:id="@+id/option3_et"
-            android:layout_width="wrap_content"
+        <TextView
+
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="8dp"
-            android:hint="Write Option 3"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:textColor="@android:color/black"
             android:textColorHint="@color/iron"
             android:textSize="14sp" />
     </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -123,13 +110,13 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/publish_poll"
+            android:id="@+id/publish_poll1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_marginStart="8dp"
             android:background="@drawable/button"
-            android:text="Publish"
+            android:text="Dismiss"
             android:textAlignment="center"
             android:textColor="@color/accent"
             android:textSize="16sp" />

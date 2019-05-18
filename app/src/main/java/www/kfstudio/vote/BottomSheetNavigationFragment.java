@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -126,7 +127,15 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
     private void dialog() {
         dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.about_dialog);
+        Button button = dialog.findViewById(R.id.publish_poll1);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
         dialog.show();
+
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
