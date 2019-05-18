@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="none">
-       <item
+
+        <item
+            android:id="@+id/nav61"
+            android:title="About" />
+
+        <item
             android:id="@+id/nav16"
             android:title="Logout"
             />

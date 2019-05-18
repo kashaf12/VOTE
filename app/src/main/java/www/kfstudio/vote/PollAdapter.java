@@ -1,11 +1,6 @@
 package www.kfstudio.vote;
 
-import android.app.Activity;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,15 +20,13 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import me.ithebk.barchart.BarChart;
 import me.ithebk.barchart.BarChartModel;
 import me.ithebk.barchart.BarChartUtils;
 
 public class PollAdapter extends FirestoreRecyclerAdapter<Poll, PollAdapter.PollHolder> {
     private OnItemClickListener listener;
+    BarChartModel barChartModel;
     View v;
 
     Uri image;
@@ -104,9 +97,11 @@ public class PollAdapter extends FirestoreRecyclerAdapter<Poll, PollAdapter.Poll
         TextView poll_vote;
         CircularImageView profile_poll_image;
         BarChart chart;
+        int prevposition = 0;
 
         ImageView option1_poll_image,option2_poll_image,option3_poll_image;
-        public PollHolder(@NonNull View itemView) {
+
+        public PollHolder(@NonNull final View itemView) {
             super(itemView);
             poll_name = itemView.findViewById(R.id.poll_name1);
             poll_email = itemView.findViewById(R.id.email_poll1);
@@ -123,15 +118,16 @@ public class PollAdapter extends FirestoreRecyclerAdapter<Poll, PollAdapter.Poll
             chart= itemView.findViewById(R.id.bar_chart_vertical);
             chart.setVisibility(View.GONE);
              bar_text.setVisibility(View.GONE);
+            chart.clearAll();
             poll_1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    poll_1.setClickable(false);
-                    poll_2.setClickable(false);
-                    poll_3.setClickable(false);
+                    chart.clearAll();
+
                     chart.setVisibility(View.VISIBLE);
                     bar_text.setVisibility(View.VISIBLE);
                     int position = getAdapterPosition();
+                    prevposition = position;
                     String poll_vote = (String) getSnapshots().getSnapshot(position).get("poll_vote");
                     String poll_vote_1 = (String) getSnapshots().getSnapshot(position).get("poll_vote_1");
                     String poll_vote_2 = (String) getSnapshots().getSnapshot(position).get("poll_vote_2");
@@ -157,7 +153,7 @@ public class PollAdapter extends FirestoreRecyclerAdapter<Poll, PollAdapter.Poll
                             }else{
                                 x=50;
                             }
-                            BarChartModel barChartModel = new BarChartModel();
+                            barChartModel = new BarChartModel();
                             barChartModel.setBarValue((int) x);
                             barChartModel.setBarColor(BarChartUtils.getRandomColor());
                             barChartModel.setBarTag(null);
@@ -170,9 +166,7 @@ public class PollAdapter extends FirestoreRecyclerAdapter<Poll, PollAdapter.Poll
             poll_2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    poll_1.setClickable(false);
-                    poll_2.setClickable(false);
-                    poll_3.setClickable(false);
+                    chart.clearAll();
                     chart.setVisibility(View.VISIBLE);
                     bar_text.setVisibility(View.VISIBLE);
                     int position = getAdapterPosition();
@@ -201,7 +195,7 @@ public class PollAdapter extends FirestoreRecyclerAdapter<Poll, PollAdapter.Poll
                             }else{
                                 x=50;
                             }
-                            BarChartModel barChartModel = new BarChartModel();
+                            barChartModel = new BarChartModel();
                             barChartModel.setBarValue((int) x);
                             barChartModel.setBarColor(BarChartUtils.getRandomColor());
                             barChartModel.setBarTag(null);
@@ -214,9 +208,7 @@ public class PollAdapter extends FirestoreRecyclerAdapter<Poll, PollAdapter.Poll
             poll_3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    poll_1.setClickable(false);
-                    poll_2.setClickable(false);
-                    poll_3.setClickable(false);
+                    chart.clearAll();
                     chart.setVisibility(View.VISIBLE);
                     bar_text.setVisibility(View.VISIBLE);
                     int position = getAdapterPosition();
@@ -234,7 +226,7 @@ public class PollAdapter extends FirestoreRecyclerAdapter<Poll, PollAdapter.Poll
                                 case 2: poll=Integer.parseInt(poll_vote_2);
                                     break;
                                 case 3: poll=Integer.parseInt(poll_vote_3);
-                                   
+
                                     break;
                             }
                             double x;
@@ -245,7 +237,7 @@ public class PollAdapter extends FirestoreRecyclerAdapter<Poll, PollAdapter.Poll
                             }else{
                                 x=50;
                             }
-                            BarChartModel barChartModel = new BarChartModel();
+                            barChartModel = new BarChartModel();
                             barChartModel.setBarValue((int) x);
                             barChartModel.setBarTag(poll);
                             barChartModel.setBarColor(BarChartUtils.getRandomColor());

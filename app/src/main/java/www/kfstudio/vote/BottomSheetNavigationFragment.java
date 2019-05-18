@@ -10,25 +10,21 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 
 public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
@@ -63,7 +59,7 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
 
 
     };
-
+    Dialog dialog;
     private FirebaseAuth mAuth;
     private ImageView profile;
     DocumentReference documentReference;
@@ -77,7 +73,7 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
     private String userimage;
     @SuppressLint("RestrictedApi")
     @Override
-    public void setupDialog(Dialog dialog, int style) {
+    public void setupDialog(final Dialog dialog, int style) {
         super.setupDialog(dialog, style);
         //Get the content View
         View contentView = View.inflate(getContext(), R.layout.bottom_navigation_drawer, null);
@@ -107,9 +103,14 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
                             sendToAuth();
                         }
                         break;
+                    case R.id.nav61:
+                        dialog();
+                        break;
                 }
                 return false;
             }
+
+
         });
 
         //Set the coordinator layout behavior
@@ -120,6 +121,12 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
         if (behavior instanceof BottomSheetBehavior) {
             ((BottomSheetBehavior) behavior).setBottomSheetCallback(mBottomSheetBehaviorCallback);
         }
+    }
+
+    private void dialog() {
+        dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.about_dialog);
+        dialog.show();
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parent_ll"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/accent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="12dp"
+        android:text="Create Your Poll"
+        android:textColor="@color/primary_darker"
+        android:textSize="18sp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Poll :"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/poll_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:hint="Who will win 2019 State elections?"
+            android:textColor="@android:color/black"
+            android:textColorHint="@color/iron"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/option1_image"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@color/iron"
+            android:src="@drawable/baseline_add_white_24" />
+
+        <EditText
+            android:id="@+id/option1_et"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:hint="Write Option 1"
+            android:textColor="@android:color/black"
+            android:textColorHint="@color/iron"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/option2_image"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@color/iron"
+            android:src="@drawable/baseline_add_white_24" />
+
+        <EditText
+            android:id="@+id/option2_et"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:hint="Write Option 2"
+            android:textColor="@android:color/black"
+            android:textColorHint="@color/iron"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/option3_image"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@color/iron"
+            android:src="@drawable/baseline_add_white_24" />
+
+        <EditText
+            android:id="@+id/option3_et"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:hint="Write Option 3"
+            android:textColor="@android:color/black"
+            android:textColorHint="@color/iron"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/publish_poll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/button"
+            android:text="Publish"
+            android:textAlignment="center"
+            android:textColor="@color/accent"
+            android:textSize="16sp" />
+    </LinearLayout>
+</LinearLayout>
