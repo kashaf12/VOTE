@@ -76,7 +76,9 @@
             android:layout_marginStart="8dp"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textColor="@android:color/black"
+            android:text="kashafaahme@gmail.com"
+
+            android:textColor="@color/primary_dark"
             android:textColorHint="@color/iron"
             android:textSize="14sp" />
     </LinearLayout>
