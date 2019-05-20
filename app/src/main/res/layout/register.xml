@@ -80,7 +80,7 @@
                 <EditText
                     android:id="@+id/name"
                     android:singleLine="true"
-                    android:inputType="text"
+                    android:inputType="textPersonName"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
@@ -105,7 +105,7 @@
                 <EditText
                     android:id="@+id/phonnumber"
                     android:singleLine="true"
-                    android:inputType="number"
+                    android:inputType="phone"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"

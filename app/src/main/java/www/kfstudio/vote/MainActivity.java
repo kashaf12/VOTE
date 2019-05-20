@@ -2,19 +2,15 @@ package www.kfstudio.vote;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,8 +19,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -69,7 +67,7 @@ public class  MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        phoneText = (EditText) findViewById(R.id.emaillog);
+        phoneText = findViewById(R.id.emaillog);
         ccpGetNumber = findViewById(R.id.ccp_getFullNumber);
         sendButton = findViewById(R.id.btnuserlog);
         sendButton.setVisibility(View.INVISIBLE);
@@ -202,6 +200,13 @@ public class  MainActivity extends AppCompatActivity {
                         else{
                             if(task.getException()instanceof FirebaseAuthInvalidCredentialsException){
                                 Toast.makeText(MainActivity.this, "Credential error !! ", Toast.LENGTH_SHORT).show();
+                                linearLayout.setVisibility(View.VISIBLE);
+                                phoneText.setVisibility(View.VISIBLE);
+                                progressBar.setVisibility(View.GONE);
+                                sendButton.setVisibility(View.VISIBLE);
+                                sendButton.setClickable(true);
+                                sendButton.setEnabled(true);
+                                sendButton.setText("Login");
                             }
                         }
                     }

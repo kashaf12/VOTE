@@ -72,7 +72,7 @@ public class Home extends AppCompatActivity{
     int poll_vote_3=0;
 
     Uri uriTask1,uriTask2,uriTask3,uriTask_profile;
-    private File compressedImage,profile_imag;
+    private File compressedImage;
     private File compressedImage1;
     private File compressedImage2;
     private File compressedImage3;
@@ -113,25 +113,21 @@ public class Home extends AppCompatActivity{
         floatingActionButton = findViewById(R.id.fab);
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
-
         //main line for setting menu in bottom app bar
         setSupportActionBar(bottomAppBar);
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         database(currentUser.getPhoneNumber());
+
         if (bundle != null) {
 
             image = Uri.fromFile(new File(bundle.getString("image")));
             uploadProfile();
         }else{
-            image = Uri.parse("android.resource://"+getApplicationContext().getPackageName()+"/drawable/blank_profile_picture_973460_960_720");
+            image = Uri.parse(getURLForResource(R.drawable.blank_profile_picture));
             downloadimage(currentUser.getPhoneNumber());
-            }
+        }
         setUpRecyclerView();
-
-
-
-
         bottomAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -213,9 +209,34 @@ public class Home extends AppCompatActivity{
                         option2string = etOption2.getText().toString().trim();
                         option3string = etOption3.getText().toString().trim();
                         if (!(TextUtils.isEmpty(pollNameString) | TextUtils.isEmpty(option1string) | TextUtils.isEmpty(option2string) | TextUtils.isEmpty(option3string))) {
-                            uploadImage("poll1");
-                            uploadImage("poll2");
-                            uploadImage("poll3");
+                            if (compressedImage == null) {
+                                new Compressor(getApplicationContext())
+                                        .setMaxWidth(60)
+                                        .setMaxHeight(60)
+                                        .setQuality(50)
+                                        .setCompressFormat(Bitmap.CompressFormat.WEBP)
+                                        .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
+                                                Environment.DIRECTORY_PICTURES).getAbsolutePath())
+                                        .compressToFileAsFlowable(new File(getURLForResource(R.drawable.blank_profile_picture)))
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(new Consumer<File>() {
+                                            @Override
+                                            public void accept(File file) {
+                                                compressedImage = file;
+                                                uploadImage("poll1");
+                                                uploadImage("poll2");
+                                                uploadImage("poll3");
+                                            }
+                                        }, new Consumer<Throwable>() {
+                                            @Override
+                                            public void accept(Throwable throwable) {
+                                                throwable.printStackTrace();
+                                                showError(throwable.getMessage());
+                                            }
+                                        });
+                            }
+
                             uploadPoll(pollNameString,option1string,option2string,option3string);
                             dialog.dismiss();
                         }else{
@@ -362,9 +383,6 @@ public class Home extends AppCompatActivity{
                     e.printStackTrace();
                 }
             }
-
-
-
         }
     }
     public void customCompressImage() {
@@ -426,58 +444,75 @@ public class Home extends AppCompatActivity{
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
     }
     private void uploadImage(final String name) {
-        switch (name){
-            case "poll1":compressedImage=compressedImage1;
-                break;
-            case "poll2": compressedImage=compressedImage2;
-                break;
-            case "poll3":compressedImage=compressedImage3;
-                break;
-        }if(!name.isEmpty()) {
-
-            storageReference = storage.getReferenceFromUrl
-                    ("gs://voteapp-master-8201e.appspot.com/"
-                            + currentUser.getPhoneNumber() + "/Polls/"
-                            + currentDateTimeString + "/");
-            if (compressedImage != null) {
-                final StorageReference ref = storageReference.child(name);
-                ref.putFile(Uri.fromFile(compressedImage)).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                    @Override
-                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                        if(!task.isSuccessful()){
-                            throw task.getException();
-                        }
-                        return ref.getDownloadUrl();
+        if (compressedImage != null) {
+            switch (name) {
+                case "poll1":
+                    if (compressedImage1 != null) {
+                        compressedImage = compressedImage1;
                     }
-                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                        if (task.isSuccessful()) {
-                            downloadUri = task.getResult();
-                            polling = new HashMap<>();
-                            switch (name){
-                                case "profile":uriTask_profile=downloadUri;
-                                    polling.put("poll_profile_image",uriTask_profile.toString());
-                                    db.collection("Polls").document(currentDateTimeString).update(polling);
-                                    break;
-                                case "poll1":uriTask1= downloadUri;
-                                    polling.put("poll_1_url",uriTask1.toString());
-                                    db.collection("Polls").document(currentDateTimeString).update(polling);
+                    break;
+                case "poll2":
+                    if (compressedImage2 != null) {
+                        compressedImage = compressedImage2;
+                    }
 
-                                    break;
-                                case "poll2": uriTask2=downloadUri;
-                                    polling.put("poll_2_url",uriTask2.toString());
-                                    db.collection("Polls").document(currentDateTimeString).update(polling);
-                                    break;
-                                case "poll3":uriTask3=downloadUri;
-                                    polling.put("poll_3_url",uriTask3.toString());
-                                    db.collection("Polls").document(currentDateTimeString).update(polling);
-                                    break;
+                    break;
+                case "poll3":
+                    if (compressedImage3 != null) {
+                        compressedImage = compressedImage3;
+                    }
+
+                    break;
+            }
+
+            if (!name.isEmpty()) {
+                storageReference = storage.getReferenceFromUrl
+                        ("gs://voteapp-master-8201e.appspot.com/"
+                                + currentUser.getPhoneNumber() + "/Polls/"
+                                + currentDateTimeString + "/");
+                final StorageReference ref = storageReference.child(name);
+                if (compressedImage != null) {
+                    ref.putFile(Uri.fromFile(compressedImage)).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                        @Override
+                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                            if (!task.isSuccessful()) {
+                                throw task.getException();
+                            }
+                            return ref.getDownloadUrl();
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()) {
+                                downloadUri = task.getResult();
+                                polling = new HashMap<>();
+                                switch (name) {
+                                    case "profile":
+                                        uriTask_profile = downloadUri;
+                                        polling.put("poll_profile_image", uriTask_profile.toString());
+                                        db.collection("Polls").document(currentDateTimeString).update(polling);
+                                        break;
+                                    case "poll1":
+                                        uriTask1 = downloadUri;
+                                        polling.put("poll_1_url", uriTask1.toString());
+                                        db.collection("Polls").document(currentDateTimeString).update(polling);
+
+                                        break;
+                                    case "poll2":
+                                        uriTask2 = downloadUri;
+                                        polling.put("poll_2_url", uriTask2.toString());
+                                        db.collection("Polls").document(currentDateTimeString).update(polling);
+                                        break;
+                                    case "poll3":
+                                        uriTask3 = downloadUri;
+                                        polling.put("poll_3_url", uriTask3.toString());
+                                        db.collection("Polls").document(currentDateTimeString).update(polling);
+                                        break;
+                                }
                             }
                         }
-                    }
-                });
-
+                    });
+                }
             }
         }
     }
@@ -540,4 +575,7 @@ public class Home extends AppCompatActivity{
 
     }
 
+    public String getURLForResource(int resourceId) {
+        return Uri.parse("android.resource://" + R.class.getPackage().getName() + "/" + resourceId).toString();
+    }
 }

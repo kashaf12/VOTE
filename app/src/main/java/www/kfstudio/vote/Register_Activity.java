@@ -1,35 +1,19 @@
 package www.kfstudio.vote;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.app.TaskStackBuilder;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
-import android.provider.Settings;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -39,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -49,61 +34,21 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.DexterError;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.PermissionRequestErrorListener;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.mikhaellopez.circularimageview.CircularImageView;
-import com.mlsdev.rximagepicker.RxImageConverters;
-import com.mlsdev.rximagepicker.RxImagePicker;
-import com.mlsdev.rximagepicker.Sources;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-
-
-import io.reactivex.ObservableSource;
-
-
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.Random;
 
 import id.zelory.compressor.Compressor;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -152,6 +97,24 @@ public class Register_Activity extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
         db = FirebaseFirestore.getInstance();
         name = findViewById(R.id.name);
+        InputFilter[] textfilters = new InputFilter[1];
+        textfilters[0] = new InputFilter() {
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                if (end > start) {
+
+                    char[] acceptedChars = new char[]{' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '.'};
+
+                    for (int index = start; index < end; index++) {
+                        if (!new String(acceptedChars).contains(String.valueOf(source.charAt(index)))) {
+                            return "";
+                        }
+                    }
+                }
+                return null;
+            }
+
+        };
+        name.setFilters(textfilters);
         email = findViewById(R.id.email);
         gender = findViewById(R.id.gender);
         dob = findViewById(R.id.dob);
@@ -166,10 +129,12 @@ public class Register_Activity extends AppCompatActivity {
         circleImageView = findViewById(R.id.profile_image);
         storage = FirebaseStorage.getInstance();
         progressBar =findViewById(R.id.progress_bar);
+        URL url;
         EditText pHonenumber = findViewById(R.id.phonnumber);
          showProgress(1);
         save = findViewById(R.id.save);
         final Calendar myCalendar = Calendar.getInstance();
+        myCalendar.add(Calendar.YEAR, -18);
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear,
@@ -186,9 +151,11 @@ public class Register_Activity extends AppCompatActivity {
         dob.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(Register_Activity.this, date, myCalendar
+                DatePickerDialog dpDialog = new DatePickerDialog(Register_Activity.this, date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                        myCalendar.get(Calendar.DAY_OF_MONTH));
+                dpDialog.getDatePicker().setMaxDate(myCalendar.getTimeInMillis());
+                dpDialog.show();
             }
         });
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
@@ -202,7 +169,7 @@ public class Register_Activity extends AppCompatActivity {
         });
         if (bundle != null) {
             String phoneNumber = (String) bundle.get("phoneNumber");
-            Boolean main = (Boolean) bundle.getBoolean("Main");
+            Boolean main = bundle.getBoolean("Main");
             pHonenumber.setFocusable(false);
             pHonenumber.setEnabled(false);
             pHonenumber.setCursorVisible(false);
@@ -265,8 +232,32 @@ public class Register_Activity extends AppCompatActivity {
                     db.collection("Vote").document("Users")
                             .collection(phoneNumber).document("ProfileInformation")
                             .set(user);
+                    if (compressedImage == null) {
+                        new Compressor(getApplicationContext())
+                                .setMaxWidth(60)
+                                .setMaxHeight(60)
+                                .setQuality(50)
+                                .setCompressFormat(Bitmap.CompressFormat.WEBP)
+                                .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
+                                        Environment.DIRECTORY_PICTURES).getAbsolutePath())
+                                .compressToFileAsFlowable(new File(getURLForResource(R.drawable.blank_profile_picture)))
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Consumer<File>() {
+                                    @Override
+                                    public void accept(File file) {
+                                        compressedImage = file;
+                                        uploadImage();
+                                    }
+                                }, new Consumer<Throwable>() {
+                                    @Override
+                                    public void accept(Throwable throwable) {
+                                        throwable.printStackTrace();
+                                        showError(throwable.getMessage());
+                                    }
+                                });
+                    }
 
-                    uploadImage();
 
                 }else{
                     showProgress(1);
@@ -343,7 +334,7 @@ public class Register_Activity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == this.RESULT_CANCELED) {
+        if (resultCode == RESULT_CANCELED) {
             return;
         }
         if (requestCode == GALLERY) {
@@ -403,8 +394,9 @@ public class Register_Activity extends AppCompatActivity {
     private void uploadImage() {
         showProgress(2);
         storageReference = storage.getReferenceFromUrl("gs://voteapp-master-8201e.appspot.com/" + phoneNumber + "/");
+        final StorageReference ref = storageReference.child("profile_picture");
         if (compressedImage != null) {
-            final StorageReference ref = storageReference.child("profile_picture");
+
             ref.putFile(Uri.fromFile(compressedImage)).continueWith(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
@@ -416,7 +408,7 @@ public class Register_Activity extends AppCompatActivity {
             }).addOnCompleteListener(new OnCompleteListener<Task<Uri>>() {
                 @Override
                 public void onComplete(@NonNull Task<Task<Uri>> task) {
-                    if(task.isSuccessful()) {
+                    if (task.isSuccessful()) {
                         user.put("profile_image", task.getResult().toString());
                         db.collection("Vote").document("Users")
                                 .collection(phoneNumber).document("ProfileInformation")
@@ -425,11 +417,8 @@ public class Register_Activity extends AppCompatActivity {
                     }
                 }
             });
-
-
-
-
         }
+
         String path = compressedImage.getAbsolutePath();
         Intent intent = new Intent(Register_Activity.this, Home.class);
         intent.putExtra("image",path);
@@ -456,5 +445,9 @@ public class Register_Activity extends AppCompatActivity {
                 break;
         }
 
+    }
+
+    public String getURLForResource(int resourceId) {
+        return Uri.parse("android.resource://" + R.class.getPackage().getName() + "/" + resourceId).toString();
     }
 }
